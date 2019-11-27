@@ -1,0 +1,15 @@
+DECLARE @GROWTHDAYS int
+SET  @GROWTHDAYS = 7
+SELECT DISTINCT TOP 10
+(SELECT SD.IPAddress
+FROM  ServersDetails SD
+WHERE SD.ServerID = dl.ServerID) IPAddress, dl.DatabaseName, dl.DataDrive, ((SELECT TOP 1 dl1.DataSizeInMB  FROM DatabasesList dl1
+
+WHERE CAST(dl1.UpdatedDate AS DATE) = (SELECT CAST(MAX(LS.UpdatedDate) AS date) 
+	FROM  DatabasesList LS WHERE ls.ServerID = dl.ServerID AND ls.DatabaseName = dl.DatabaseName)  
+	AND dl1.DatabaseName = dl.DatabaseName AND dl1.ServerID = dl.ServerID) - (SELECT TOP 1 dl1.DataSizeInMB FROM  DatabasesList dl1 
+	WHERE  /*CAST(dl1.UpdatedDate AS DATE) = (SELECT CAST(MIN(LS.UpdatedDate) as date) 
+	FROM DatabasesList LS where ls.ServerID=dl.ServerID and ls.DatabaseName=dl.DatabaseName) */ CAST(dl1.UpdatedDate AS DATE) >= (SELECT CAST(MAX (LS.UpdatedDate - @GROWTHDAYS) AS date) 
+	FROM  DatabasesList LS WHERE ls.ServerID = dl.ServerID AND ls.DatabaseName = dl.DatabaseName) AND dl1.DatabaseName = dl.DatabaseName AND dl1.ServerID = dl.ServerID)) GrowthMBInLastSevenDays  
+	FROM (SELECT  dlmain.DatabaseName, dlmain.DataDrive, dlmain.LogDrive, dlmain.ServerID  FROM  DatabasesList dlmain  GROUP BY dlmain.DatabaseName, dlmain.DataDrive, dlmain.LogDrive, dlmain.ServerID) dl 
+ORDER BY GrowthMBInLastSevenDays DESC
