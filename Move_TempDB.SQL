@@ -1,3 +1,5 @@
+-- The The code below is used to move the temp to drive E if you your Drive C is getting maxed  by the temp DB when you Run a heavy Query
+
 USE master
 GO
 ALTER DATABASE TempDB MODIFY FILE
