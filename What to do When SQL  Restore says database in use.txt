@@ -1,0 +1,8 @@
+---The Code below allows to restore a database when it  is not allowing to restore
+use master
+
+alter database ABC set single_user with rollback immediate
+
+restore database ABC
+
+alter database ABC set multi_user
