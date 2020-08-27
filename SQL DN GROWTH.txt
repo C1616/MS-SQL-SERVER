@@ -1,3 +1,5 @@
+-The script below helps you monitor database growth on MS-SQL-SERVER
+
 DECLARE @GROWTHDAYS int
 SET  @GROWTHDAYS = 7
 SELECT DISTINCT TOP 10
